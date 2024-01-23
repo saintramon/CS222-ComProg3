@@ -57,7 +57,7 @@ public class PreExercise1 implements Runnable{
     }
 
     /**
-     * This method outputs the number of hosts/IP and the corresponding IP address of each host in a given host name or IP address
+     * This method prints the number of hosts/IP and the corresponding IP address of each host in a given host name or IP address
      */
     @Override
     public void run(){
