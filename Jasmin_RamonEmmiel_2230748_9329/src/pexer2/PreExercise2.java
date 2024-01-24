@@ -26,13 +26,13 @@ public class PreExercise2 {
 
                 ){
 
-            streamWtr.print("What is your name? ");
+            streamWtr.println("What is your name? ");
 
             String name = streamRdr.readLine();
             int age;
 
             while (true){
-                streamWtr.print("What is your age? ");
+                streamWtr.println("What is your age? ");
                 try {
                     age = Integer.parseInt(streamRdr.readLine());
 
