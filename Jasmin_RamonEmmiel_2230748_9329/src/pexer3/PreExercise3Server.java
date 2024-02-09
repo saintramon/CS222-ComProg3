@@ -8,18 +8,25 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PreExercise3Server {
     public static void main(String[] args) {
-        try {
-            ServerSocket serverSocket = new ServerSocket(3704);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try (
+                ServerSocket serverSocket = new ServerSocket(3704);
+                ){
 
             while (true){
                 Socket clientSocket = serverSocket.accept();
-                new Thread(new ClientHandler(clientSocket)).start();
+                executorService.submit(new ClientHandler(clientSocket));
             }
         }catch (IOException iox){
             iox.printStackTrace();
+        }finally {
+           executorService.shutdown();
         }
     }
 }
@@ -42,7 +49,7 @@ class ClientHandler implements Runnable{
 
             while (true){
                 Object object = inputStream.readObject();
-                if (object == null){
+                if (object == null || object.equals("bye")){
                     break;
                 }
                 Expression expression = (Expression) object;
@@ -54,7 +61,14 @@ class ClientHandler implements Runnable{
                 outputStream.writeObject(result);
             }
 
+            outputStream.writeObject("\nTermination key received, closing server...");
+            outputStream.flush();
+
+
+            outputStream.close();
+            inputStream.close();
             clientSocket.close();
+
         }catch (IOException iox){
             iox.printStackTrace();
         }catch (ClassNotFoundException cnfx){

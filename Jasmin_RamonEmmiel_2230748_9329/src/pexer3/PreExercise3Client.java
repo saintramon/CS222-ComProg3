@@ -47,12 +47,12 @@ public class PreExercise3Client {
 
                 Expression expression = new Expression(operand1,operator,operand2);
 
+                //sending an expression object to server
                 outputStream.writeObject(expression);
             }
 
-            outputStream.writeObject(null); //to signal server that the sending of expressions are finished
+            outputStream.writeObject("bye");
             outputStream.flush();
-            clientSocket.shutdownOutput();
 
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -61,6 +61,7 @@ public class PreExercise3Client {
             System.out.println("-------");
 
 
+            //Printing of results sent by the server
             while (true){
                 try {
                     line = (String) inputStream.readObject();
