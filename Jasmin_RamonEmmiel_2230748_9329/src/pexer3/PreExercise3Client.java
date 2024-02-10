@@ -1,3 +1,24 @@
+/**
+ * JASMIN, RAMON EMMIEL P.
+ * 2230748
+ *
+ * SAMPLE RUN:
+ *
+ * RESULTS
+ * -------
+ * 5 ^ 2 = 25.0
+ * 12 % 5 = 2.0
+ * abc * 3 = Invalid
+ * 8 $ 4 = Invalid
+ * 6.7 + 3 = 9.7
+ * 9 / 0 = Invalid
+ * xyz ^ 2 = Invalid
+ * 4 - 3 = 1.0
+ * 7 * 7 = 49.0
+ * 10 ' 2 = Invalid
+ *
+ * Termination key received, closing server...
+ */
 package pexer3;
 
 import org.xml.sax.SAXException;
@@ -5,12 +26,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.*;
+
 import java.net.Socket;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 
@@ -51,6 +73,7 @@ public class PreExercise3Client {
                 outputStream.writeObject(expression);
             }
 
+            // Sends the "bye" message after no line can be read from the xml file
             outputStream.writeObject("bye");
             outputStream.flush();
 
@@ -74,7 +97,8 @@ public class PreExercise3Client {
                 }
             }
 
-
+            outputStream.close();
+            inputStream.close();
             clientSocket.close();
 
         }catch (IOException iox){

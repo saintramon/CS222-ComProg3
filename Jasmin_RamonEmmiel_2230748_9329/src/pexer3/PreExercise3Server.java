@@ -1,18 +1,28 @@
+/**
+ * JASMIN, RAMON EMMIEL P.
+ * 2230748
+ */
 package pexer3;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import java.lang.*;
+
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PreExercise3Server {
+    /**
+     * Main method that creates a new thread for new clients
+     * @param args
+     */
     public static void main(String[] args) {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         try (
@@ -22,6 +32,7 @@ public class PreExercise3Server {
             while (true){
                 Socket clientSocket = serverSocket.accept();
                 executorService.submit(new ClientHandler(clientSocket));
+
             }
         }catch (IOException iox){
             iox.printStackTrace();
@@ -31,9 +42,14 @@ public class PreExercise3Server {
     }
 }
 
+/**
+ * Handles the server-side logic for client requests
+ */
 class ClientHandler implements Runnable{
 
     private Socket clientSocket;
+
+    private volatile boolean shouldTerminate = false;
 
     public ClientHandler(Socket clientSocket){
         this.clientSocket = clientSocket;
@@ -47,9 +63,12 @@ class ClientHandler implements Runnable{
 
             List<String> results = new ArrayList<>();
 
+            //This loop will receive the Nodes from the client and convert it to Expression object, will terminate if "bye" message is received.
             while (true){
                 Object object = inputStream.readObject();
+                // If "bye" is received, it will break the loop and would terminate the program after sending the processed Nodes.
                 if (object == null || object.equals("bye")){
+                    shouldTerminate = true;
                     break;
                 }
                 Expression expression = (Expression) object;
@@ -57,6 +76,7 @@ class ClientHandler implements Runnable{
                 results.add(result);
             }
 
+            // Returns the list of results to the client
             for (String result : results){
                 outputStream.writeObject(result);
             }
@@ -73,13 +93,20 @@ class ClientHandler implements Runnable{
             iox.printStackTrace();
         }catch (ClassNotFoundException cnfx){
             cnfx.printStackTrace();
+        }finally {
+            if (shouldTerminate){
+                System.exit(0);
+            }
         }
     }
 
+    /**
+     * This method handles the logic for the evaluation of an Expression object
+     * @param expression
+     * @return
+     */
     public String evaluateExpression(Expression expression){
         try {
-
-
             double operand1 = Double.parseDouble(expression.getOperand1());
             String operator = expression.getOperator();
             double operand2 = Double.parseDouble(expression.getOperand2());
